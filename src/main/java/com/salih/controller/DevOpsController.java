@@ -11,16 +11,20 @@ import java.time.LocalDateTime;
 @RequestMapping
 public class DevOpsController {
 
-    //  http://localhost:8080
+    //  http://localhost:8081
     @GetMapping
     public String devopsHello() {
+        System.out.println("DevOps Hello : " + LocalDateTime.now());
         return "DevOps Hello : " + LocalDateTime.now();
     }
 
-    //  http://localhost:8080/info
+    //  http://localhost:8081/info
     @GetMapping("/info")
     public String info() {
-        return "DEVOPS INFO : " + LocalDateTime.now();
+        System.out.println("DEVOPS INFO : " + LocalDateTime.now());
+        //return "DEVOPS INFO : " + LocalDateTime.now();
+        return "DEVOPS INFO : ";
+
     }
 
 }

@@ -269,8 +269,75 @@ To launch the Minikube dashboard and monitor the deployment, follow these steps:
    ```bash
    minikube start
    minikube dashboard
+   minikube service my-application-service --url
+
     ```
-   
+
+### Jenkins Pipeline with Unit Testing and Docker Cleanup
+
+The Jenkins Pipeline has been updated to include a **Unit Test** stage and a **Docker Image Cleanup** stage. Here’s the complete Pipeline script:
+
+```groovy
+pipeline {
+    agent any
+
+    tools {
+        jdk 'JDK17'
+        maven 'Maven3'
+    }
+
+    stages {
+
+        stage('Build Maven') {
+            steps {
+                checkout scmGit(
+                    branches: [[name: '*/master']], 
+                    extensions: [], 
+                    userRemoteConfigs: [[url: 'https://github.com/AbdullahSalihOner/DevOps-02-Pipeline']]
+                )
+                bat 'mvn clean install'
+            }
+        }
+
+        stage('Unit Test') {
+            steps {
+                bat 'mvn test'  // Runs the unit tests for the project
+            }
+        }
+
+        stage('Docker Image') {
+            steps {
+                bat 'docker build -t asoner01/my-application:latest .'
+            }
+        }
+
+        stage('Docker Image to DockerHub') {
+            steps {
+                script {
+                    withCredentials([string(credentialsId: 'dockerhub', variable: 'dockerhub')]) {
+                        bat 'echo docker login -u asoner01 -p ${dockerhub}'
+                        bat 'docker image push asoner01/my-application:latest'
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                kubernetesDeploy(configs: 'deployment-service.yml', kubeconfigId: 'kubernetes')
+            }
+        }
+
+        stage('Docker Image Cleanup') {
+            steps {
+                bat 'docker image prune -f'  // Cleans up unused Docker images to free space
+            }
+        }
+    }
+}
+```
+
+
 
 
 
