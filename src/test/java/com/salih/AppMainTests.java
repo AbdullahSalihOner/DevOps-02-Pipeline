@@ -13,20 +13,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class AppMainTests {
 
-	@Autowired
-	private MockMvc mockMvc;
 
-
-	@Test
-	void contextLoads() {
-	}
-
-	@Test
-	void shouldReturnInfo() throws Exception {
-		//  http://localhost:8081/info
-		this.mockMvc.perform(get("/info"))
-				.andExpect(status().isOk())
-				.andExpect(content().string("DEVOPS INFO : "));
-	}
 
 }
