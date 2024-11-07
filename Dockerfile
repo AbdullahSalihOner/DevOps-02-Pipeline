@@ -7,14 +7,14 @@ FROM openjdk:17
 ARG JAR_FILE=target/*.jar
 
 # Copy the JAR file into the Docker container with a specified name
-COPY ${JAR_FILE} devops-hello-app.jar
+COPY ${JAR_FILE} my-application.jar
 
 # Use CMD to run any commands needed during setup
 CMD apt-get update
 CMD apt-get upgrade -y
 
-# Expose port 8080 to fix the internal port
-EXPOSE 8080
+# Expose port 8081 to fix the internal port
+EXPOSE 8081
 
 # Command to run the application
-ENTRYPOINT ["java","-jar","devops-hello-app.jar"]
+ENTRYPOINT ["java","-jar","my-application.jar"]
