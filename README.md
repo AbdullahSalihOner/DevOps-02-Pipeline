@@ -256,6 +256,21 @@ pipeline {
 }
 ```
 
+### Monitoring the Kubernetes Deployment with Minikube
+
+After deploying the application to a Kubernetes cluster using Jenkins, we can use **Minikube** to monitor and manage the application locally. Minikube provides a convenient way to run Kubernetes on your local machine, enabling you to view the status of pods, services, and deployments.
+
+#### Accessing the Minikube Dashboard
+
+To launch the Minikube dashboard and monitor the deployment, follow these steps:
+
+1. **Start Minikube** (if it’s not already running):
+
+   ```bash
+   minikube start
+   minikube dashboard
+    ```
+   
 
 
 
