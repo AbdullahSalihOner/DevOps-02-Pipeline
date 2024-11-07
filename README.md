@@ -61,9 +61,14 @@ Jenkins is now configured to use Maven 3.9.6, allowing you to automate the build
 
 ---
 
+
 ### Setting Up Credentials and Docker in Jenkins
 
 In order to automate pushing images to DockerHub and pulling code from GitHub, we need to set up credentials in Jenkins. Additionally, Docker must be configured as a tool to manage containerization tasks.
+
+
+![Jenkins Credentials Configuration](images/3_pipeline.png)
+*Configured credentials in Jenkins for GitHub, DockerHub, and Kubernetes.*
 
 #### Adding DockerHub and GitHub Credentials
 
@@ -111,6 +116,9 @@ With Docker and credentials configured in Jenkins, you’re now ready to automat
 This section describes a Jenkins Pipeline script that performs two main tasks:
 1. **Build the Maven Project**: Compiles the project and packages it using Maven.
 2. **Create a Docker Image**: Builds a Docker image from the project, tagging it with the `latest` tag.
+
+![Basic Pipeline Stages](images/1_pipeline.png)
+*Basic Jenkins pipeline stages showing Maven build, Docker image creation, and DockerHub push.*
 
 #### Pipeline Script
 
@@ -203,6 +211,9 @@ pipeline {
 
 To automate the deployment of the Docker image to a Kubernetes cluster, we configured Jenkins to use the Kubernetes plugin. This allows us to deploy the application directly from Jenkins.
 
+![Kubernetes Services in Minikube](images/4_pipeline.png)
+*Kubernetes services in Minikube, showing NodePort and LoadBalancer for accessing the application.*
+
 #### Jenkins Pipeline Update for Kubernetes Deployment
 
 In this stage, we use the `kubernetesDeploy` step to deploy our application to Kubernetes using a YAML configuration file (`deployment-service.yml`).
@@ -256,9 +267,16 @@ pipeline {
 }
 ```
 
+![Expanded Pipeline with Kubernetes Deployment](images/2_pipeline.png)
+*Pipeline stages expanded with Kubernetes deployment.*
+
 ### Monitoring the Kubernetes Deployment with Minikube
 
 After deploying the application to a Kubernetes cluster using Jenkins, we can use **Minikube** to monitor and manage the application locally. Minikube provides a convenient way to run Kubernetes on your local machine, enabling you to view the status of pods, services, and deployments.
+
+
+![Kubernetes Deployments](images/5_pipeline.png)
+*Active Kubernetes deployments managed by Minikube.*
 
 #### Accessing the Minikube Dashboard
 
@@ -337,6 +355,12 @@ pipeline {
 }
 ```
 
+![Application Output](images/6_pipeline.png)
+*Application output after successful deployment, accessible via the Kubernetes service.*
+
+
+![Complete Pipeline](images/7_pipeline.png)
+*Complete Jenkins pipeline showing all stages from build to cleanup.*
 
 
 
