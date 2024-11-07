@@ -199,6 +199,64 @@ pipeline {
 }
 ```
 
+### Deploying to Kubernetes
+
+To automate the deployment of the Docker image to a Kubernetes cluster, we configured Jenkins to use the Kubernetes plugin. This allows us to deploy the application directly from Jenkins.
+
+#### Jenkins Pipeline Update for Kubernetes Deployment
+
+In this stage, we use the `kubernetesDeploy` step to deploy our application to Kubernetes using a YAML configuration file (`deployment-service.yml`).
+
+Here’s the updated Jenkins Pipeline script:
+
+```groovy
+pipeline {
+    agent any
+
+    tools {
+        maven 'Maven3'
+    }
+
+    stages {
+
+        stage('Build Maven') {
+            steps {
+                checkout scmGit(
+                    branches: [[name: '*/master']], 
+                    extensions: [], 
+                    userRemoteConfigs: [[url: 'https://github.com/AbdullahSalihOner/DevOps-02-Pipeline']]
+                )
+                bat 'mvn clean install'
+            }
+        }
+        
+        stage('Docker Image') {
+            steps {
+                bat 'docker build -t asoner01/my-application:latest .'
+            }
+        }
+
+        stage('Push to DockerHub') {
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
+                        bat 'docker push asoner01/my-application:latest'
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                kubernetesDeploy(configs: 'deployment-service.yml', kubeconfigId: 'kubernetes')
+            }
+        }
+
+    }
+}
+```
+
+
 
 
    
