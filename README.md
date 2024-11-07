@@ -61,6 +61,98 @@ Jenkins is now configured to use Maven 3.9.6, allowing you to automate the build
 
 ---
 
+### Setting Up Credentials and Docker in Jenkins
+
+In order to automate pushing images to DockerHub and pulling code from GitHub, we need to set up credentials in Jenkins. Additionally, Docker must be configured as a tool to manage containerization tasks.
+
+#### Adding DockerHub and GitHub Credentials
+
+1. **Open Jenkins**: Access your Jenkins instance at [http://localhost:9999](http://localhost:9999).
+
+2. **Navigate to Credentials**:
+   - Go to **Manage Jenkins** > **Manage Credentials**.
+   - Select the appropriate domain (or create a new domain if necessary).
+
+3. **Add DockerHub Credentials**:
+   - Click **Add Credentials**.
+   - Set the **Kind** to **Username with password**.
+   - Enter your **DockerHub username** and **password**.
+   - For **ID** or **Description**, use something descriptive like `dockerhub-credentials` for easy identification.
+   - Click **OK** to save.
+
+4. **Add GitHub Credentials**:
+   - Click **Add Credentials** again.
+   - Set the **Kind** to **Username with password** or **Secret text** (if using a personal access token).
+   - Enter your **GitHub username** and **password** (or **token** for **Secret text**).
+   - Use an **ID** like `github-credentials` for easy identification.
+   - Click **OK** to save.
+
+#### Adding Docker as a Tool
+
+1. **Navigate to Global Tool Configuration**:
+   - From the Jenkins dashboard, go to **Manage Jenkins** > **Global Tool Configuration**.
+
+2. **Add Docker**:
+   - Scroll down to the **Docker** section.
+   - Click **Add Docker** to create a new Docker installation.
+   - Set the **Name** (e.g., `Docker-latest`).
+   - Under **Install automatically**, choose **Latest** to allow Jenkins to handle Docker installations and updates.
+
+3. **Save Configuration**:
+   - Click **Save** to store these changes.
+
+With Docker and credentials configured in Jenkins, you’re now ready to automate tasks involving Docker containers and integration with GitHub repositories.
+
+---
+
+
+### Jenkins Pipeline for Maven Build and Docker Image Creation
+
+This section describes a Jenkins Pipeline script that performs two main tasks:
+1. **Build the Maven Project**: Compiles the project and packages it using Maven.
+2. **Create a Docker Image**: Builds a Docker image from the project, tagging it with the `latest` tag.
+
+#### Pipeline Script
+
+Below is the Jenkins Pipeline script. This script assumes Jenkins has been configured with `Maven3` as a tool, and Docker is installed and available on the Jenkins agent.
+
+```groovy
+pipeline {
+    agent any
+
+    tools {
+        maven 'Maven3'  // Uses the Maven tool configured in Jenkins
+    }
+
+    stages {
+
+        stage('Build Maven') {
+            steps {
+                // Check out code from GitHub repository
+                checkout scmGit(
+                    branches: [[name: '*/master']], 
+                    extensions: [], 
+                    userRemoteConfigs: [[url: 'https://github.com/AbdullahSalihOner/DevOps-02-Pipeline']]
+                )
+
+                // Build and package the application with Maven
+                // For Unix/Linux, use: sh 'mvn clean install'
+                bat 'mvn clean install'  // For Windows, use 'bat'
+            }
+        }
+        
+        stage('Docker Image') {
+            steps {
+                // Build Docker image and tag it
+                // For Unix/Linux, use: sh 'docker build -t asoner01/my-application:latest .'
+                bat 'docker build -t asoner01/my-application:latest .'  // For Windows, use 'bat'
+            }
+        }
+
+    }
+}
+```
+
 
 
    
