@@ -153,6 +153,52 @@ pipeline {
 }
 ```
 
+#### DockerHub Push Stage
+
+To make the Docker image available publicly, we’ve added a step to push it to DockerHub. Make sure that DockerHub credentials have been configured in Jenkins as described earlier.
+
+Update the Jenkins Pipeline script to include the DockerHub push step:
+
+```groovy
+pipeline {
+    agent any
+
+    tools {
+        maven 'Maven3'
+    }
+
+    stages {
+
+        stage('Build Maven') {
+            steps {
+                checkout scmGit(
+                    branches: [[name: '*/master']], 
+                    extensions: [], 
+                    userRemoteConfigs: [[url: 'https://github.com/AbdullahSalihOner/DevOps-02-Pipeline']]
+                )
+                bat 'mvn clean install'
+            }
+        }
+        
+        stage('Docker Image') {
+            steps {
+                bat 'docker build -t asoner01/my-application:latest .'
+            }
+        }
+
+        stage('Push to DockerHub') {
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
+                        bat 'docker push asoner01/my-application:latest'
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
 
 
    
